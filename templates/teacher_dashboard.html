@@ -1,47 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Dashboard - Online Exam System</title>
+    <title>Teacher Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <nav>
-            <a href="/logout" class="btn btn-danger">Logout</a>
-        </nav>
-        <hr>
-        <h1>Welcome, {{ name }}!</h1>
-        
-        <div class="dashboard-card">
-            <h3>My Exams</h3>
-            <a href="{{ url_for('create_exam') }}" class="btn">Create New Exam</a>
-            <br><br>
-            {% if exams %}
-                <table border="1" width="100%" cellpadding="10">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Duration (Mins)</th>
-                            <th>Total Marks</th>
-                            <th>Max Tab Switches</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for exam in exams %}
-                        <tr>
-                            <td>{{ exam[1] }}</td>
-                            <td>{{ exam[4] }}</td>
-                            <td>{{ exam[3] }}</td>
-                            <td>{{ exam[5] }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+        <header>
+            <h1>Welcome, Prof. {{ name }}!</h1>
+            <nav>
+                <a href="{{ url_for('create_exam') }}" class="btn">Create New Exam</a> | 
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </nav>
+        </header>
+
+        <h2>Your Managed Exams</h2>
+        <div class="exam-list">
+            {% for exam in exams %}
+            <div class="card">
+                <h3>{{ exam.title }}</h3>
+                <p><strong>Duration:</strong> {{ exam.duration }} mins</p>
+                <p><strong>Total Marks:</strong> {{ exam.total_marks }}</p>
+                <div class="actions">
+                    <a href="{{ url_for('add_questions', exam_id=exam.id) }}" class="btn">Manage Questions</a>
+                </div>
+            </div>
             {% else %}
-                <p>You haven't created any exams yet.</p>
-            {% endif %}
+            <p>You haven't created any exams yet.</p>
+            {% endfor %}
         </div>
     </div>
 </body>

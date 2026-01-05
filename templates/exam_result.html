@@ -6,19 +6,14 @@
 </head>
 <body>
     <div class="container">
-        <h2>Exam Submitted Successfully!</h2>
-        <div class="dashboard-card" style="text-align: center;">
-            <h3>Your Score</h3>
-            <p style="font-size: 48px; color: #4CAF50; margin: 20px 0;">
-                {{ marks }} / {{ total }}
-            </p>
-            <p>Congratulations on completing the exam!</p>
+        <h2>Exam Result: {{ exam.title }}</h2>
+        <div class="result-card">
+            <p><strong>Total Marks:</strong> {{ result.total_marks }}</p>
+            <p><strong>Score Obtained:</strong> {{ result.score }}</p>
+            <p><strong>Submission Time:</strong> {{ result.submission_time }}</p>
         </div>
-        <p><a href="{{ url_for('student_dashboard') }}" class="btn">Back to Dashboard</a></p>
+        <br>
+        <a href="{{ url_for('student_dashboard') }}" class="btn">Back to Dashboard</a>
     </div>
-    <script>
-        // Disable warning when leaving the result page
-        window.onbeforeunload = null;
-    </script>
 </body>
 </html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Questions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Add Questions for: {{ exam.title }}</h2>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label>Question Text:</label>
+                <textarea name="question_text" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Option A:</label>
+                <input type="text" name="option_a" required>
+            </div>
+            <div class="form-group">
+                <label>Option B:</label>
+                <input type="text" name="option_b" required>
+            </div>
+            <div class="form-group">
+                <label>Option C:</label>
+                <input type="text" name="option_c" required>
+            </div>
+            <div class="form-group">
+                <label>Option D:</label>
+                <input type="text" name="option_d" required>
+            </div>
+            <div class="form-group">
+                <label>Correct Option (A/B/C/D):</label>
+                <select name="correct_option" required>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                </select>
+            </div>
+            <button type="submit" class="btn">Add Question</button>
+        </form>
+
+        <hr>
+        <h3>Existing Questions</h3>
+        <ul>
+            {% for q in questions %}
+                <li>{{ q.question_text }} (Ans: {{ q.correct_option }})</li>
+            {% endfor %}
+        </ul>
+        <br>
+        <a href="{{ url_for('teacher_dashboard') }}">Back to Dashboard</a>
+    </div>
+</body>
+</html>

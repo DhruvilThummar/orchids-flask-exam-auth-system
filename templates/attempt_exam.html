@@ -1,73 +1,83 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Attempt Exam - {{ exam[1] }}</title>
+    <title>Attempt Exam: {{ exam.title }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <div class="container" style="max-width: 900px;">
-        <!-- Anti-Cheat Config (Hidden) -->
-        <input type="hidden" id="max-violations" value="{{ exam[5] }}">
-        <input type="hidden" id="exam-id" value="{{ exam[0] }}">
-
-        <div class="timer-box">
-            Time Remaining: <span id="timer">--:--</span>
-        </div>
-
-        <h2>{{ exam[1] }}</h2>
-        <p>{{ exam[2] }}</p>
-        <hr>
-
-        <form id="exam-form" action="{{ url_for('submit_exam', exam_id=exam[0]) }}" method="POST">
-            {% for q in questions %}
-            <div class="question-card">
-                <p><strong>Q{{ loop.index }}: {{ q[2] }}</strong></p>
-                <label>
-                    <input type="radio" name="question_{{ q[0] }}" value="A"> {{ q[3] }}
-                </label><br>
-                <label>
-                    <input type="radio" name="question_{{ q[0] }}" value="B"> {{ q[4] }}
-                </label><br>
-                <label>
-                    <input type="radio" name="question_{{ q[0] }}" value="C"> {{ q[5] }}
-                </label><br>
-                <label>
-                    <input type="radio" name="question_{{ q[0] }}" value="D"> {{ q[6] }}
-                </label>
-            </div>
-            {% endfor %}
-
-            <button type="submit" class="btn" style="width: 200px; margin: 20px auto; display: block;">Submit Exam</button>
-        </form>
-    </div>
-
-    <!-- Timer Script -->
     <script>
-        let duration = {{ exam[4] }} * 60; // Convert to seconds
-        let display = document.getElementById('timer');
-
+        // Module 3: Timer Logic
+        let timeLeft = {{ exam.duration }} * 60;
         function startTimer() {
-            let timer = duration, minutes, seconds;
-            let countdown = setInterval(function () {
-                minutes = parseInt(timer / 60, 10);
-                seconds = parseInt(timer % 60, 10);
-
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
-
-                display.textContent = minutes + ":" + seconds;
-
-                if (--timer < 0) {
-                    clearInterval(countdown);
-                    alert("Time's up! Your exam will be submitted automatically.");
+            const timerDisplay = document.getElementById('timer');
+            const interval = setInterval(() => {
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                timerDisplay.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                if (timeLeft <= 0) {
+                    clearInterval(interval);
+                    alert("Time is up! Submitting your exam.");
                     document.getElementById('exam-form').submit();
                 }
+                timeLeft--;
             }, 1000);
         }
-        startTimer();
-    </script>
 
-    <!-- Anti-Cheat Script -->
-    <script src="{{ url_for('static', filename='anti_cheat.js') }}"></script>
+        // Module 4: Anti-Cheat Logic
+        let violations = 0;
+        const limit = {{ exam.tab_switch_limit }};
+
+        function logViolation() {
+            violations++;
+            fetch('/api/violation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ exam_id: {{ exam.id }} })
+            }).then(res => res.json())
+              .then(data => {
+                  if (data.count >= limit) {
+                      alert("VIOLATION LIMIT EXCEEDED! Your exam is being submitted automatically.");
+                      document.getElementById('exam-form').submit();
+                  } else {
+                      alert(`WARNING: Tab switch detected! (Violation ${data.count}/${limit})`);
+                  }
+              });
+        }
+
+        window.onblur = function() {
+            logViolation();
+        };
+
+        // Disable right-click, copy, paste
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('copy', event => event.preventDefault());
+        document.addEventListener('paste', event => event.preventDefault());
+
+        window.onload = startTimer;
+    </script>
+</head>
+<body oncopy="return false" oncut="return false" onpaste="return false">
+    <div class="container">
+        <header style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>{{ exam.title }}</h2>
+            <div id="timer-container" style="background: #333; color: #fff; padding: 10px; border-radius: 5px;">
+                Time Remaining: <span id="timer">--:--</span>
+            </div>
+        </header>
+        <p>{{ exam.description }}</p>
+        <hr>
+
+        <form id="exam-form" method="POST">
+            {% for q in questions %}
+            <div class="question-block">
+                <p><strong>Q{{ loop.index }}: {{ q.question_text }}</strong></p>
+                <label><input type="radio" name="q_{{ q.id }}" value="A"> {{ q.option_a }}</label><br>
+                <label><input type="radio" name="q_{{ q.id }}" value="B"> {{ q.option_b }}</label><br>
+                <label><input type="radio" name="q_{{ q.id }}" value="C"> {{ q.option_c }}</label><br>
+                <label><input type="radio" name="q_{{ q.id }}" value="D"> {{ q.option_d }}</label><br>
+            </div>
+            <br>
+            {% endfor %}
+            <button type="submit" class="btn">Submit Exam</button>
+        </form>
+    </div>
 </body>
 </html>

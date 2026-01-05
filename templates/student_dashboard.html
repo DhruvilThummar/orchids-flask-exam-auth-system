@@ -1,47 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard - Online Exam System</title>
+    <title>Student Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <nav>
-            <a href="/logout" class="btn btn-danger">Logout</a>
-        </nav>
-        <hr>
-        <h1>Welcome, {{ name }}!</h1>
-        
-        <div class="dashboard-card">
-            <h3>Available Exams</h3>
-            {% if exams %}
-                <table border="1" width="100%" cellpadding="10">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Duration (Mins)</th>
-                            <th>Total Marks</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for exam in exams %}
-                        <tr>
-                            <td>{{ exam[1] }}</td>
-                            <td>{{ exam[4] }}</td>
-                            <td>{{ exam[3] }}</td>
-                            <td>
-                                <a href="{{ url_for('attempt_exam', exam_id=exam[0]) }}" class="btn">Start Exam</a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+        <header>
+            <h1>Welcome, {{ name }}!</h1>
+            <nav>
+                <a href="{{ url_for('student_history') }}">My Exam History</a> | 
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </nav>
+        </header>
+
+        <h2>Available Exams</h2>
+        <div class="exam-list">
+            {% for exam in exams %}
+            <div class="card">
+                <h3>{{ exam.title }}</h3>
+                <p>{{ exam.description }}</p>
+                <p><strong>Duration:</strong> {{ exam.duration }} mins</p>
+                <p><strong>Total Marks:</strong> {{ exam.total_marks }}</p>
+                <a href="{{ url_for('attempt_exam', exam_id=exam.id) }}" class="btn">Start Exam</a>
+            </div>
             {% else %}
-                <p>No exams available at the moment.</p>
-            {% endif %}
+            <p>No exams available at the moment.</p>
+            {% endfor %}
         </div>
     </div>
 </body>

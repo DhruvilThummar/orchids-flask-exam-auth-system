@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exam History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Your Exam History</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Exam Title</th>
+                    <th>Score</th>
+                    <th>Total Marks</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in history %}
+                <tr>
+                    <td>{{ entry.title }}</td>
+                    <td>{{ entry.score }}</td>
+                    <td>{{ entry.total_marks }}</td>
+                    <td>{{ entry.submission_time }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4">No exam history found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br>
+        <a href="{{ url_for('student_dashboard') }}" class="btn">Back to Dashboard</a>
+    </div>
+</body>
+</html>
