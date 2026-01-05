@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - Online Exam System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="/logout" class="btn btn-danger">Logout</a>
+        </nav>
+        <hr>
+        <h1>Welcome, {{ name }}!</h1>
+        <div class="dashboard-card">
+            <h3>Your Profile</h3>
+            <p><strong>Name:</strong> {{ name }}</p>
+            <p><strong>Role:</strong> {{ role }}</p>
+        </div>
+        
+        <div class="info">
+            <p>This is your teacher dashboard. Here you will be able to create and manage exams in future modules.</p>
+        </div>
+    </div>
+</body>
+</html>
