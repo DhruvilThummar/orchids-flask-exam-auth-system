@@ -13,14 +13,35 @@
         </nav>
         <hr>
         <h1>Welcome, {{ name }}!</h1>
-        <div class="dashboard-card">
-            <h3>Your Profile</h3>
-            <p><strong>Name:</strong> {{ name }}</p>
-            <p><strong>Role:</strong> {{ role }}</p>
-        </div>
         
-        <div class="info">
-            <p>This is your teacher dashboard. Here you will be able to create and manage exams in future modules.</p>
+        <div class="dashboard-card">
+            <h3>My Exams</h3>
+            <a href="{{ url_for('create_exam') }}" class="btn">Create New Exam</a>
+            <br><br>
+            {% if exams %}
+                <table border="1" width="100%" cellpadding="10">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Duration (Mins)</th>
+                            <th>Total Marks</th>
+                            <th>Max Tab Switches</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for exam in exams %}
+                        <tr>
+                            <td>{{ exam[1] }}</td>
+                            <td>{{ exam[4] }}</td>
+                            <td>{{ exam[3] }}</td>
+                            <td>{{ exam[5] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>You haven't created any exams yet.</p>
+            {% endif %}
         </div>
     </div>
 </body>

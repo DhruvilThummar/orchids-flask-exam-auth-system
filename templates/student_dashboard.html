@@ -13,14 +13,35 @@
         </nav>
         <hr>
         <h1>Welcome, {{ name }}!</h1>
-        <div class="dashboard-card">
-            <h3>Your Profile</h3>
-            <p><strong>Name:</strong> {{ name }}</p>
-            <p><strong>Role:</strong> {{ role }}</p>
-        </div>
         
-        <div class="info">
-            <p>This is your student dashboard. Here you will be able to view and take your exams in future modules.</p>
+        <div class="dashboard-card">
+            <h3>Available Exams</h3>
+            {% if exams %}
+                <table border="1" width="100%" cellpadding="10">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Duration (Mins)</th>
+                            <th>Total Marks</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for exam in exams %}
+                        <tr>
+                            <td>{{ exam[1] }}</td>
+                            <td>{{ exam[4] }}</td>
+                            <td>{{ exam[3] }}</td>
+                            <td>
+                                <a href="{{ url_for('attempt_exam', exam_id=exam[0]) }}" class="btn">Start Exam</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No exams available at the moment.</p>
+            {% endif %}
         </div>
     </div>
 </body>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attempt Exam - {{ exam[1] }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container" style="max-width: 900px;">
+        <!-- Anti-Cheat Config (Hidden) -->
+        <input type="hidden" id="max-violations" value="{{ exam[5] }}">
+        <input type="hidden" id="exam-id" value="{{ exam[0] }}">
+
+        <div class="timer-box">
+            Time Remaining: <span id="timer">--:--</span>
+        </div>
+
+        <h2>{{ exam[1] }}</h2>
+        <p>{{ exam[2] }}</p>
+        <hr>
+
+        <form id="exam-form" action="{{ url_for('submit_exam', exam_id=exam[0]) }}" method="POST">
+            {% for q in questions %}
+            <div class="question-card">
+                <p><strong>Q{{ loop.index }}: {{ q[2] }}</strong></p>
+                <label>
+                    <input type="radio" name="question_{{ q[0] }}" value="A"> {{ q[3] }}
+                </label><br>
+                <label>
+                    <input type="radio" name="question_{{ q[0] }}" value="B"> {{ q[4] }}
+                </label><br>
+                <label>
+                    <input type="radio" name="question_{{ q[0] }}" value="C"> {{ q[5] }}
+                </label><br>
+                <label>
+                    <input type="radio" name="question_{{ q[0] }}" value="D"> {{ q[6] }}
+                </label>
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn" style="width: 200px; margin: 20px auto; display: block;">Submit Exam</button>
+        </form>
+    </div>
+
+    <!-- Timer Script -->
+    <script>
+        let duration = {{ exam[4] }} * 60; // Convert to seconds
+        let display = document.getElementById('timer');
+
+        function startTimer() {
+            let timer = duration, minutes, seconds;
+            let countdown = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    clearInterval(countdown);
+                    alert("Time's up! Your exam will be submitted automatically.");
+                    document.getElementById('exam-form').submit();
+                }
+            }, 1000);
+        }
+        startTimer();
+    </script>
+
+    <!-- Anti-Cheat Script -->
+    <script src="{{ url_for('static', filename='anti_cheat.js') }}"></script>
+</body>
+</html>
